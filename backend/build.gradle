@@ -1,0 +1,47 @@
+plugins {
+  id 'java'
+  id 'war'
+}
+
+group 'com.example.productsystem'
+version '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+ext {
+  junitVersion = '5.11.0'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+dependencies {
+  implementation(project(':common'))
+  implementation 'org.hibernate:hibernate-core:6.2.6.Final'
+  implementation 'org.postgresql:postgresql:42.7.3'
+  implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'
+  // Jakarta EE зависимости
+  compileOnly('jakarta.validation:jakarta.validation-api:3.1.0')
+  compileOnly('jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0')
+  compileOnly('jakarta.json.bind:jakarta.json.bind-api:3.0.1')
+  compileOnly('jakarta.persistence:jakarta.persistence-api:3.2.0')
+  compileOnly('jakarta.ws.rs:jakarta.ws.rs-api:4.0.0')
+  compileOnly('jakarta.servlet:jakarta.servlet-api:6.1.0')
+
+  testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+  useJUnitPlatform()
+}
+
+war {
+  archiveFileName = 'backend.war'
+}
