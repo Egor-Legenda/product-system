@@ -8,6 +8,10 @@ import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
 import java.util.*;
 
+/*
+ * Репозиторий для управления сущностями Product.
+ * Предоставляет методы для создания, поиска, обновления, удаления и сложных запросов.
+ */
 @ApplicationScoped
 public class ProductRepository {
     @PersistenceContext(unitName = "ProductPU")
@@ -89,10 +93,71 @@ public class ProductRepository {
     }
 
     public int increasePricePercent(int percent) {
-        int updated = em.createQuery("UPDATE Product p SET p.price = p.price * (1 + :factor)")
-                .setParameter("factor", percent / 100.0f)
+        int updated = em.createQuery("UPDATE Product p SET p.price = p.price * :factor")
+                .setParameter("factor", 1 + (percent / 100.0f))
                 .executeUpdate();
         return updated;
+    }
+
+    public List<Product> filterByField(String field, String value, int page, int size, String sortField, boolean asc) {
+        if (field == null || value == null || value.trim().isEmpty()) {
+            return list(page, size, sortField, asc);
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Product> cq = cb.createQuery(Product.class);
+        Root<Product> root = cq.from(Product.class);
+
+        Predicate filterPredicate = createFilterPredicate(cb, root, field, value);
+        cq.where(filterPredicate);
+
+        if (sortField != null) {
+            Path<?> path = getSortPath(root, sortField);
+            cq.orderBy(asc ? cb.asc(path) : cb.desc(path));
+        }
+
+        TypedQuery<Product> q = em.createQuery(cq);
+        q.setFirstResult(page * size);
+        q.setMaxResults(size);
+        return q.getResultList();
+    }
+
+    private Predicate createFilterPredicate(CriteriaBuilder cb, Root<Product> root, String field, String value) {
+        String searchPattern = "%" + value.toLowerCase() + "%";
+
+        switch (field) {
+            case "name":
+                return cb.like(cb.lower(root.get("name")), searchPattern);
+            case "partNumber":
+                return cb.like(cb.lower(root.get("partNumber")), searchPattern);
+            case "unitOfMeasure":
+                return cb.like(cb.lower(root.get("unitOfMeasure")), searchPattern);
+            case "manufacturer.name":
+                return cb.like(cb.lower(root.join("manufacturer").get("name")), searchPattern);
+            case "owner.name":
+                return cb.like(cb.lower(root.join("owner").get("name")), searchPattern);
+            case "owner.passportID":
+                return cb.like(cb.lower(root.join("owner").get("passportID")), searchPattern);
+            case "manufacturer.type":
+                return cb.like(cb.lower(root.join("manufacturer").get("type")), searchPattern);
+            default:
+                throw new IllegalArgumentException("Unknown filter field: " + field);
+        }
+    }
+
+    private Path<?> getSortPath(Root<Product> root, String sortField) {
+        switch (sortField) {
+            case "manufacturer.name":
+                return root.join("manufacturer").get("name");
+            case "owner.name":
+                return root.join("owner").get("name");
+            case "coordinates.x":
+                return root.join("coordinates").get("x");
+            case "coordinates.y":
+                return root.join("coordinates").get("y");
+            default:
+                return root.get(sortField);
+        }
     }
 
 }

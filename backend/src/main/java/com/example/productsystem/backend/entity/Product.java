@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
-
+/*
+ * Product класс содержащий в себе информацию о продукте.
+ */
 @Entity
 @Table(name = "products", uniqueConstraints = {
         @UniqueConstraint(columnNames = "partNumber")

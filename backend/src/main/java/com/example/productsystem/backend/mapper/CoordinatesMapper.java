@@ -3,6 +3,9 @@ package com.example.productsystem.backend.mapper;
 import com.example.productsystem.backend.entity.Coordinates;
 import com.example.productsystem.common.CoordinatesDTO;
 
+/*
+ * Маппер для преобразования между Coordinates и CoordinatesDTO.
+ */
 public class CoordinatesMapper {
     public static CoordinatesDTO toDTO(
             Coordinates entity) {

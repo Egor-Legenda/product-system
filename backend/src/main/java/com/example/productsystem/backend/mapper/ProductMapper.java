@@ -2,9 +2,11 @@ package com.example.productsystem.backend.mapper;
 
 
 import com.example.productsystem.backend.entity.Product;
-import com.example.productsystem.common.OrganizationDTO;
 import com.example.productsystem.common.ProductDTO;
 
+/*
+ * Маппер для преобразования между Product и ProductDTO.
+ */
 public class ProductMapper {
 
     public static ProductDTO toDTO(Product entity) {

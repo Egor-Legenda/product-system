@@ -4,6 +4,9 @@ package com.example.productsystem.backend.mapper;
 import com.example.productsystem.backend.entity.Person;
 import com.example.productsystem.common.PersonDTO;
 
+/*
+ * Маппер для преобразования между Person и PersonDTO.
+ */
 public class PersonMapper {
 
     public static PersonDTO toDTO(Person entity) {

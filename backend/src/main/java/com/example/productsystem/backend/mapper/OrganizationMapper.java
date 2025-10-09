@@ -5,6 +5,9 @@ package com.example.productsystem.backend.mapper;
 import com.example.productsystem.backend.entity.Organization;
 import com.example.productsystem.common.OrganizationDTO;
 
+/*
+ * Маппер для преобразования между Organization и OrganizationDTO.
+ */
 public class OrganizationMapper {
 
     public static OrganizationDTO toDTO(Organization entity) {

@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/*
+ * REST ресурс для управления сущностями Address.
+ * Предоставляет CRUD операции и дополнительные endpoints для поиска и фильтрации.
+ */
 @Path("/addresses")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -25,6 +29,11 @@ public class AddressResource {
     @Inject
     private AddressService addressService;
 
+    /*
+     * Создание нового адреса.
+     * Принимает AddressDTO в теле запроса и возвращает созданный AddressDTO с HTTP статусом 201.
+     * Обрабатывает ошибки валидации и внутренние ошибки сервера.
+     */
     @POST
     @Transactional
     public Response create(AddressDTO dto, @Context UriInfo uriInfo) {
@@ -48,6 +57,11 @@ public class AddressResource {
         }
     }
 
+    /*
+     * Получение списка адресов с поддержкой пагинации и сортировки.
+     * Параметры запроса: page, size, field (для сортировки), order (asc/desc).
+     * Возвращает список AddressDTO.
+     */
     @GET
     public Response list(@QueryParam("page") @DefaultValue("0") int page,
                          @QueryParam("size") @DefaultValue("20") int size,
@@ -59,6 +73,10 @@ public class AddressResource {
         return Response.ok(dtos).build();
     }
 
+    /*
+     * Получение адреса по его ID.
+     * Возвращает AddressDTO или 404 если адрес не найден.
+     */
     @GET
     @Path("/{id}")
     public Response get(@PathParam("id") Long id) {
@@ -71,6 +89,11 @@ public class AddressResource {
         return Response.ok(AddressMapper.toDTO(address)).build();
     }
 
+    /*
+     * Обновление существующего адреса по его ID.
+     * Принимает AddressDTO в теле запроса и возвращает обновленный AddressDTO.
+     * Возвращает 404 если адрес не найден.
+     */
     @PUT
     @Path("/{id}")
     @Transactional
@@ -88,6 +111,10 @@ public class AddressResource {
         return Response.ok(AddressMapper.toDTO(updated)).build();
     }
 
+    /*
+     * Удаление адреса по его ID.
+     * Возвращает 204 No Content при успешном удалении или 404 если адрес не найден.
+     */
     @DELETE
     @Path("/{id}")
     @Transactional
@@ -103,8 +130,12 @@ public class AddressResource {
         return Response.noContent().build();
     }
 
-    // Дополнительные endpoints для поиска и фильтрации
 
+
+    /*
+     * Поиск адресов по почтовому индексу.
+     * Возвращает список AddressDTO, соответствующих заданному почтовому индексу.
+     */
     @GET
     @Path("/search/by-zipcode/{zipCode}")
     public Response findByZipCode(@PathParam("zipCode") String zipCode) {
@@ -113,6 +144,11 @@ public class AddressResource {
         return Response.ok(dtos).build();
     }
 
+    /*
+     * Фильтрация адресов по названию города с поддержкой пагинации.
+     * Параметры запроса: page, size.
+     * Возвращает список AddressDTO, соответствующих заданному названию города.
+     */
     @GET
     @Path("/filter/by-town-name/{townName}")
     public Response findByTownName(@PathParam("townName") String townName,
@@ -123,18 +159,30 @@ public class AddressResource {
         return Response.ok(dtos).build();
     }
 
+    /*
+     * Получение уникальных почтовых индексов из всех адресов.
+     * Возвращает список уникальных почтовых индексов.
+     */
     @GET
     @Path("/unique-zipcodes")
     public Response getUniqueZipCodes() {
         return Response.ok(addressService.findUniqueZipCodes()).build();
     }
 
+    /*
+     * Получение количества адресов в каждом городе.
+     * Возвращает список объектов с названием города и количеством адресов в нем.
+     */
     @GET
     @Path("/count-by-town")
     public Response getCountByTown() {
         return Response.ok(addressService.getAddressCountByTown()).build();
     }
 
+    /*
+     * Обработка HTTP OPTIONS запроса.
+     * Возвращает поддерживаемые методы для ресурса Address.
+     */
     @OPTIONS
     public Response options() {
         return Response.ok()
@@ -142,6 +190,9 @@ public class AddressResource {
                 .build();
     }
 
+    /*
+     * Вспомогательный метод для создания стандартизированного ответа об ошибке.
+     */
     private Object createErrorResponse(String error, String message) {
         return Map.of(
                 "error", error,

@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
-
+/*
+* Адрес класс содержащий в себе почтовый индекс и город.
+ */
 @Entity
 @Table(name = "addresses")
 public class Address {

@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 
-
+/*
+ * Organization класс содержащий в себе информацию об организации.
+ */
 @Entity
 @Table(name = "organizations")
 public class Organization {

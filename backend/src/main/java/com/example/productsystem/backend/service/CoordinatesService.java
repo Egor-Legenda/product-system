@@ -10,6 +10,11 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Сервисный слой для управления сущностями Coordinates.
+ * Обрабатывает бизнес-логику, связанную с созданием, обновлением, удалением и поиском координат.
+ * Взаимодействует с репозиторием для выполнения операций с базой данных.
+ */
 @ApplicationScoped
 public class CoordinatesService {
 

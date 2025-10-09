@@ -3,6 +3,9 @@ package com.example.productsystem.backend.mapper;
 import com.example.productsystem.backend.entity.Location;
 import com.example.productsystem.common.LocationDTO;
 
+/*
+ * Маппер для преобразования между Location и LocationDTO.
+ */
 public class LocationMapper {
     public static LocationDTO toDTO(Location entity) {
         if (entity == null) return null;

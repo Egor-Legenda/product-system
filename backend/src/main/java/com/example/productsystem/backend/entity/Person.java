@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
-
+/*
+ * Person класс содержащий в себе информацию о человеке.
+ */
 @Entity
 @Table(name = "persons")
 public class Person {

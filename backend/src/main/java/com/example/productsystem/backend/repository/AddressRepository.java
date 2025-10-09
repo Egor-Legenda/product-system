@@ -4,12 +4,14 @@ import com.example.productsystem.backend.entity.Address;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/*
+ * Репозиторий для управления сущностями Address.
+ * Предоставляет методы для создания, поиска, обновления, удаления и сложных запросов.
+ */
 @ApplicationScoped
 public class AddressRepository {
 
@@ -41,14 +43,12 @@ public class AddressRepository {
         CriteriaQuery<Address> cq = cb.createQuery(Address.class);
         Root<Address> root = cq.from(Address.class);
 
-        // Join with town to allow sorting by town fields
         Join<Object, Object> townJoin = root.join("town", JoinType.LEFT);
 
         if (sortField != null && !sortField.isEmpty()) {
             Path<?> path;
-            // Handle sorting by town fields
             if (sortField.startsWith("town.")) {
-                String townField = sortField.substring(5); // remove "town." prefix
+                String townField = sortField.substring(5);
                 path = townJoin.get(townField);
             } else {
                 path = root.get(sortField);
@@ -73,7 +73,6 @@ public class AddressRepository {
         CriteriaQuery<Address> cq = cb.createQuery(Address.class);
         Root<Address> root = cq.from(Address.class);
 
-        // Join with town to search by town name
         Join<Object, Object> townJoin = root.join("town", JoinType.INNER);
 
         Predicate namePredicate = cb.like(cb.lower(townJoin.get("name")),
@@ -103,26 +102,5 @@ public class AddressRepository {
                         "addressCount", result[1]
                 ))
                 .collect(Collectors.toList());
-    }
-
-    // Дополнительные методы для сложных запросов
-
-    public List<Address> findByTownCoordinatesRange(Double minX, Double maxX, Double minY, Double maxY) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Address> cq = cb.createQuery(Address.class);
-        Root<Address> root = cq.from(Address.class);
-        Join<Object, Object> townJoin = root.join("town", JoinType.INNER);
-
-        List<Predicate> predicates = new ArrayList<>();
-        if (minX != null) predicates.add(cb.ge(townJoin.get("x"), minX));
-        if (maxX != null) predicates.add(cb.le(townJoin.get("x"), maxX));
-        if (minY != null) predicates.add(cb.ge(townJoin.get("y"), minY));
-        if (maxY != null) predicates.add(cb.le(townJoin.get("y"), maxY));
-
-        if (!predicates.isEmpty()) {
-            cq.where(predicates.toArray(new Predicate[0]));
-        }
-
-        return em.createQuery(cq).getResultList();
     }
 }

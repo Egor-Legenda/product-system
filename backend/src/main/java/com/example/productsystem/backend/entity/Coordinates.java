@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 
+/*
+ * Coordinates класс содержащий в себе координаты X и Y.
+  */
 @Entity
 @Table(name = "coordinates")
 public class Coordinates {

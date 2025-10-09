@@ -6,6 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/*
+* Фильтр для обработки CORS (Cross-Origin Resource Sharing) запросов.
+* Разрешает запросы с определенных источников и устанавливает необходимые заголовки.
+ */
 @WebFilter("/*")
 public class CorsFilter implements Filter {
 
@@ -20,7 +24,8 @@ public class CorsFilter implements Filter {
         if (origin != null && (origin.contains("http://localhost:3000") || origin.contains("https://localhost:3000"))) {
             httpResponse.setHeader("Access-Control-Allow-Origin", origin);
         } else {
-            httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+            httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+//            httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:42503");
         }
 
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
@@ -39,11 +44,9 @@ public class CorsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Инициализация при необходимости
     }
 
     @Override
     public void destroy() {
-        // Очистка ресурсов при необходимости
     }
 }

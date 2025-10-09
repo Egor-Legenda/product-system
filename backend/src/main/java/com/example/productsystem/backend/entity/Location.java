@@ -3,6 +3,9 @@ package com.example.productsystem.backend.entity;
 import jakarta.persistence.*;
 
 
+/*
+ * Location класс содержащий в себе координаты X, Y, Z и название локации.
+  */
 @Entity
 @Table(name = "locations")
 public class Location {

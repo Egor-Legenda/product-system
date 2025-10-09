@@ -26,6 +26,11 @@ public class CoordinatesResource {
     @Inject
     private CoordinatesService coordinatesService;
 
+    /*
+     * Создание новой сущности Coordinates.
+     * Принимает CoordinatesDTO, валидирует и сохраняет в базе.
+     * Возвращает созданный объект с HTTP статусом 201 или ошибку.
+     */
     @POST
     @Transactional
     public Response create(CoordinatesDTO dto, @Context UriInfo uriInfo) {
@@ -49,6 +54,15 @@ public class CoordinatesResource {
         }
     }
 
+    /*
+     * Получение списка всех сущностей Coordinates с поддержкой пагинации и сортировки.
+     * Параметры:
+     * - page: номер страницы (по умолчанию 0)
+     * - size: размер страницы (по умолчанию 20)
+     * - field: поле для сортировки (необязательно)
+     * - order: порядок сортировки (asc или desc, по умолчанию asc)
+     * Возвращает список CoordinatesDTO.
+     */
     @GET
     public Response list(@QueryParam("page") @DefaultValue("0") int page,
                          @QueryParam("size") @DefaultValue("20") int size,
@@ -60,6 +74,24 @@ public class CoordinatesResource {
         return Response.ok(dtos).build();
     }
 
+    /*
+     * Поиск сущностей Coordinates по значениям X и Y.
+     * Не работает!!!!
+     */
+    @GET
+    @Path("/coordinates/search")
+    public Response searchCoordinates(@QueryParam("x") Double x,
+                                      @QueryParam("y") Double y) {
+//        Coordinates coordinates = coordinatesService.find()
+        return Response.ok().build();
+    }
+
+    /*
+     * Получение сущности Coordinates по её ID.
+     * Параметр:
+     * - id: идентификатор Coordinates
+     * Возвращает CoordinatesDTO или ошибку 404, если не найдено.
+     */
     @GET
     @Path("/{id}")
     public Response get(@PathParam("id") Long id) {
@@ -72,6 +104,13 @@ public class CoordinatesResource {
         return Response.ok(CoordinatesMapper.toDTO(coordinates)).build();
     }
 
+    /*
+     * Обновление существующей сущности Coordinates по её ID.
+     * Параметры:
+     * - id: идентификатор Coordinates
+     * - dto: обновленные данные в виде CoordinatesDTO
+     * Возвращает обновленный CoordinatesDTO или ошибку 404, если не найдено.
+     */
     @PUT
     @Path("/{id}")
     @Transactional
@@ -89,6 +128,12 @@ public class CoordinatesResource {
         return Response.ok(CoordinatesMapper.toDTO(updated)).build();
     }
 
+    /*
+     * Удаление сущности Coordinates по её ID.
+     * Параметр:
+     * - id: идентификатор Coordinates
+     * Возвращает статус 204 при успешном удалении или ошибку 404, если не найдено.
+     */
     @DELETE
     @Path("/{id}")
     @Transactional
@@ -104,7 +149,15 @@ public class CoordinatesResource {
         return Response.noContent().build();
     }
 
-    // Фильтрация по диапазону значений X
+
+    /*     * Фильтрация сущностей Coordinates по диапазонам значений X и Y.
+     * Параметры:
+     * - xMin, xMax: диапазон для X (необязательно)
+     * - yMin, yMax: диапазон для Y (необязательно)
+     * - page: номер страницы (по умолчанию 0)
+     * - size: размер страницы (по умолчанию 20)
+     * Возвращает список отфильтрованных CoordinatesDTO.
+     */
     @GET
     @Path("/filter/by-x")
     public Response filterByX(@QueryParam("xMin") Integer xMin,
@@ -116,7 +169,14 @@ public class CoordinatesResource {
         return Response.ok(dtos).build();
     }
 
-    // Фильтрация по диапазону значений Y
+    /*
+     * Фильтрация сущностей Coordinates по диапазонам значений Y.
+     * Параметры:
+     * - yMin, yMax: диапазон для Y (необязательно)
+     * - page: номер страницы (по умолчанию 0)
+     * - size: размер страницы (по умолчанию 20)
+     * Возвращает список отфильтрованных CoordinatesDTO.
+     */
     @GET
     @Path("/filter/by-y")
     public Response filterByY(@QueryParam("yMin") Double yMin,
@@ -128,7 +188,13 @@ public class CoordinatesResource {
         return Response.ok(dtos).build();
     }
 
-    // Поиск координат с X больше указанного значения
+
+    /*
+    * Поиск координат с X больше указанного значения.
+    * Параметр:
+    * - x: значение для сравнения
+    * Возвращает список CoordinatesDTO с X > заданного значения.
+     */
     @GET
     @Path("/x-greater-than/{x}")
     public Response xGreaterThan(@PathParam("x") Integer x) {
@@ -137,7 +203,12 @@ public class CoordinatesResource {
         return Response.ok(dtos).build();
     }
 
-    // Поиск координат с Y меньше указанного значения
+    /*
+     * Поиск координат с Y меньше указанного значения.
+     * Параметр:
+     * - y: значение для сравнения
+     * Возвращает список CoordinatesDTO с Y < заданного значения.
+     */
     @GET
     @Path("/y-less-than/{y}")
     public Response yLessThan(@PathParam("y") Double y) {
@@ -146,20 +217,31 @@ public class CoordinatesResource {
         return Response.ok(dtos).build();
     }
 
-    // Получение уникальных значений X
+    /*
+    * Получение уникальных значений X из всех сущностей Coordinates.
+    * Возвращает список уникальных Integer значений X.
+     */
     @GET
     @Path("/unique-x")
     public Response uniqueXValues() {
         return Response.ok(coordinatesService.findUniqueXValues()).build();
     }
 
-    // Получение статистики по координатам
+
+    /*
+     * Получение статистики по сущностям Coordinates.
+     * Возвращает объект с общей статистикой (количество, среднее X и Y, мин/макс X и Y).
+     */
     @GET
     @Path("/stats")
     public Response getStats() {
         return Response.ok(coordinatesService.getCoordinatesStats()).build();
     }
 
+    /*
+     * Обработка HTTP OPTIONS запроса для поддержки CORS и информирования о доступных методах.
+     * Возвращает заголовок Allow с перечнем поддерживаемых методов.
+     */
     @OPTIONS
     public Response options() {
         return Response.ok()
@@ -167,6 +249,9 @@ public class CoordinatesResource {
                 .build();
     }
 
+    /*
+    Вспомогательный метод для создания стандартизированного объекта ошибки.
+    */
     private Object createErrorResponse(String error, String message) {
         return Map.of(
                 "error", error,

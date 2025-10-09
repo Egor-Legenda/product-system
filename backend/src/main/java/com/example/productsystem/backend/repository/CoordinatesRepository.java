@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Репозиторий для управления сущностями Coordinates.
+ * Предоставляет методы для создания, поиска, обновления, удаления и сложных запросов.
+ */
 @ApplicationScoped
 public class CoordinatesRepository {
 
@@ -25,8 +29,19 @@ public class CoordinatesRepository {
         return em.find(Coordinates.class, id);
     }
 
+    public Coordinates find(Long x, Long y) {
+        return em.find(Coordinates.class, x);
+    }
+
     public Coordinates update(Coordinates coordinates) {
         return em.merge(coordinates);
+    }
+
+    public List<Coordinates> findByCoordinates(Integer x, Double y) {
+        return em.createQuery("SELECT c FROM Coordinates c WHERE c.x = :x AND c.y = :y", Coordinates.class)
+                .setParameter("x", x)
+                .setParameter("y", y)
+                .getResultList();
     }
 
     public void delete(Long id) {
