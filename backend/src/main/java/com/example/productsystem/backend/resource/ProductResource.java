@@ -4,6 +4,7 @@ import com.example.productsystem.backend.entity.Product;
 import com.example.productsystem.backend.mapper.ProductMapper;
 import com.example.productsystem.backend.service.ProductService;
 import com.example.productsystem.common.ProductDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,8 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import static com.example.productsystem.response.ErrorResponse.createErrorResponse;
+
 /*
  * REST ресурс для управления сущностями Product.
  * Предоставляет CRUD операции и дополнительные endpoints для поиска, фильтрации и сортировки.
@@ -25,11 +28,11 @@ import java.util.stream.Collectors;
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class ProductResource {
 
     @Inject
     private ProductService productService;
-
 
     /*
      * Создание нового продукта.
@@ -244,12 +247,4 @@ public class ProductResource {
                 .build();
     }
 
-
-    private Object createErrorResponse(String error, String message) {
-        return Map.of(
-                "error", error,
-                "message", message,
-                "timestamp", LocalDateTime.now()
-        );
-    }
 }

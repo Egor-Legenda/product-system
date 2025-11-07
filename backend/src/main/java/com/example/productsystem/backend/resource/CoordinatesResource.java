@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.example.productsystem.response.ErrorResponse.createErrorResponse;
+
 @Path("/coordinates")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -249,14 +251,5 @@ public class CoordinatesResource {
                 .build();
     }
 
-    /*
-    Вспомогательный метод для создания стандартизированного объекта ошибки.
-    */
-    private Object createErrorResponse(String error, String message) {
-        return Map.of(
-                "error", error,
-                "message", message,
-                "timestamp", LocalDateTime.now()
-        );
-    }
+
 }

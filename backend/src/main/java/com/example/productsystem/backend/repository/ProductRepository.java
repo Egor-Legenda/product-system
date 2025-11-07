@@ -22,6 +22,12 @@ public class ProductRepository {
         return p;
     }
 
+    public void saveAll(List<Product> products) {
+        for (Product product : products) {
+            em.persist(product);
+        }
+    }
+
     public Product find(Long id) {
         return em.find(Product.class, id);
     }
@@ -36,11 +42,12 @@ public class ProductRepository {
 
     public Optional<Product> findByPartNumber(String partNumber) {
         try {
-            Product p = em.createQuery("SELECT p FROM Product p WHERE p.partNumber = :pn", Product.class)
+            List<Product> products = em.createQuery("SELECT p FROM Product p WHERE p.partNumber = :pn", Product.class)
                     .setParameter("pn", partNumber)
-                    .getSingleResult();
-            return Optional.of(p);
-        } catch (NoResultException ex) {
+                    .getResultList();
+            
+            return products.isEmpty() ? Optional.empty() : Optional.of(products.get(0));
+        } catch (Exception ex) {
             return Optional.empty();
         }
     }
@@ -49,15 +56,18 @@ public class ProductRepository {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Product> cq = cb.createQuery(Product.class);
         Root<Product> root = cq.from(Product.class);
+
         if (sortField != null) {
-            Path<?> path = root.get(sortField);
+            Path<?> path = getSortPathWithReflection(root, sortField);
             cq.orderBy(asc ? cb.asc(path) : cb.desc(path));
         }
+
         TypedQuery<Product> q = em.createQuery(cq);
         q.setFirstResult(page * size);
         q.setMaxResults(size);
         return q.getResultList();
     }
+
 
     public List<Product> filter(String name, Float priceMin, Float priceMax, int page, int size) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -112,7 +122,7 @@ public class ProductRepository {
         cq.where(filterPredicate);
 
         if (sortField != null) {
-            Path<?> path = getSortPath(root, sortField);
+            Path<?> path = getSortPathWithReflection(root, sortField);
             cq.orderBy(asc ? cb.asc(path) : cb.desc(path));
         }
 
@@ -145,19 +155,14 @@ public class ProductRepository {
         }
     }
 
-    private Path<?> getSortPath(Root<Product> root, String sortField) {
-        switch (sortField) {
-            case "manufacturer.name":
-                return root.join("manufacturer").get("name");
-            case "owner.name":
-                return root.join("owner").get("name");
-            case "coordinates.x":
-                return root.join("coordinates").get("x");
-            case "coordinates.y":
-                return root.join("coordinates").get("y");
-            default:
-                return root.get(sortField);
-        }
-    }
+    private Path<?> getSortPathWithReflection(Root<Product> root, String sortField) {
+        String[] fieldParts = sortField.split("\\.");
 
+        Path<?> path = root;
+        for (String part : fieldParts) {
+            path = path.get(part);
+        }
+
+        return path;
+    }
 }

@@ -24,10 +24,11 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
-    public ProductDTO(String name, CoordinatesDTO coordinates, java.time.LocalDate creationDate, UnitOfMeasure unitOfMeasure, OrganizationDTO manufacturer, Float price, long manufactureCost, int rating, String partNumber, PersonDTO owner) {
+    public ProductDTO(String name, CoordinatesDTO coordinates, UnitOfMeasure unitOfMeasure, OrganizationDTO manufacturer, Float price, long manufactureCost, int rating, String partNumber, PersonDTO owner) {
         this.name = name;
         this.coordinates = coordinates;
-        this.creationDate = creationDate;
+       // this.creationDate = creationDate;
+        this.creationDate = LocalDate.now();
         this.unitOfMeasure = unitOfMeasure;
         this.manufacturer = manufacturer;
         this.price = price;

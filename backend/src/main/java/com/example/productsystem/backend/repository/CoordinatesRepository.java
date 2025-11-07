@@ -131,23 +131,33 @@ public class CoordinatesRepository {
     }
 
     public Map<String, Object> getCoordinatesStats() {
-        Double avgX = em.createQuery("SELECT AVG(c.x) FROM Coordinates c", Double.class)
-                .getSingleResult();
-        Double avgY = em.createQuery("SELECT AVG(c.y) FROM Coordinates c", Double.class)
-                .getSingleResult();
-        Long totalCount = em.createQuery("SELECT COUNT(c) FROM Coordinates c", Long.class)
-                .getSingleResult();
-        Integer maxX = em.createQuery("SELECT MAX(c.x) FROM Coordinates c", Integer.class)
-                .getSingleResult();
-        Integer minX = em.createQuery("SELECT MIN(c.x) FROM Coordinates c", Integer.class)
-                .getSingleResult();
+        try {
+            Double avgX = em.createQuery("SELECT AVG(c.x) FROM Coordinates c", Double.class)
+                    .getSingleResult();
+            Double avgY = em.createQuery("SELECT AVG(c.y) FROM Coordinates c", Double.class)
+                    .getSingleResult();
+            Long totalCount = em.createQuery("SELECT COUNT(c) FROM Coordinates c", Long.class)
+                    .getSingleResult();
+            Integer maxX = em.createQuery("SELECT MAX(c.x) FROM Coordinates c", Integer.class)
+                    .getSingleResult();
+            Integer minX = em.createQuery("SELECT MIN(c.x) FROM Coordinates c", Integer.class)
+                    .getSingleResult();
 
-        return Map.of(
-                "totalCount", totalCount,
-                "averageX", avgX != null ? avgX : 0,
-                "averageY", avgY != null ? avgY : 0,
-                "maxX", maxX != null ? maxX : 0,
-                "minX", minX != null ? minX : 0
-        );
+            return Map.of(
+                    "totalCount", totalCount != null ? totalCount : 0L,
+                    "averageX", avgX != null ? avgX : 0.0,
+                    "averageY", avgY != null ? avgY : 0.0,
+                    "maxX", maxX != null ? maxX : 0,
+                    "minX", minX != null ? minX : 0
+            );
+        } catch (Exception ex) {
+            return Map.of(
+                    "totalCount", 0L,
+                    "averageX", 0.0,
+                    "averageY", 0.0,
+                    "maxX", 0,
+                    "minX", 0
+            );
+        }
     }
 }

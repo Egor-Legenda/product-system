@@ -57,11 +57,12 @@ public class PersonRepository {
 
     public Optional<Person> findByPassportID(String passportID) {
         try {
-            Person person = em.createQuery("SELECT p FROM Person p WHERE p.passportID = :passport", Person.class)
+            List<Person> persons = em.createQuery("SELECT p FROM Person p WHERE p.passportID = :passport", Person.class)
                     .setParameter("passport", passportID)
-                    .getSingleResult();
-            return Optional.of(person);
-        } catch (NoResultException ex) {
+                    .getResultList();
+            
+            return persons.isEmpty() ? Optional.empty() : Optional.of(persons.get(0));
+        } catch (Exception ex) {
             return Optional.empty();
         }
     }
@@ -95,7 +96,6 @@ public class PersonRepository {
         return person != null ? person.getLocation() : null;
     }
 
-    @Transactional
     public void updateLocation(Long personId, Location newLocation) {
         Person person = find(personId);
         if (person != null) {

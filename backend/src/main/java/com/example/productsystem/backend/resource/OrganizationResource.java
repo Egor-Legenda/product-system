@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.example.productsystem.response.ErrorResponse.createErrorResponse;
+
 /*
  * REST ресурс для управления организациями.
  * Предоставляет endpoints для поиска, фильтрации, сортировки и CRUD операций.
@@ -233,12 +235,4 @@ public class OrganizationResource {
                 .build();
     }
 
-    /* Вспомогательный метод для создания стандартизированного ответа об ошибке */
-    private Object createErrorResponse(String error, String message) {
-        return Map.of(
-                "error", error,
-                "message", message,
-                "timestamp", LocalDateTime.now()
-        );
-    }
 }

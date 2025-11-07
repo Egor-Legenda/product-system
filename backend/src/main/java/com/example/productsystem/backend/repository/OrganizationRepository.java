@@ -83,7 +83,6 @@ public class OrganizationRepository {
         return org != null ? org.getOfficialAddress() : null;
     }
 
-    @Transactional
     public void updateAddress(Integer organizationId, Address newAddress) {
         Organization org = find(organizationId);
         if (org != null) {
@@ -113,8 +112,14 @@ public class OrganizationRepository {
     }
 
     public Long countByType(OrganizationType type) {
-        return em.createQuery("SELECT COUNT(o) FROM Organization o WHERE o.type = :type", Long.class)
-                .setParameter("type", type)
-                .getSingleResult();
+        try {
+            List<Long> results = em.createQuery("SELECT COUNT(o) FROM Organization o WHERE o.type = :type", Long.class)
+                    .setParameter("type", type)
+                    .getResultList();
+            
+            return results.isEmpty() ? 0L : results.get(0);
+        } catch (Exception ex) {
+            return 0L;
+        }
     }
 }

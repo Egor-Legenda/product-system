@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.productsystem.response.ErrorResponse.createErrorResponse;
+
 /*
  * REST ресурс для управления сущностями Person.
  * Предоставляет CRUD операции и дополнительные endpoints для поиска и фильтрации.
@@ -360,14 +362,4 @@ public class PersonResource {
                 .build();
     }
 
-    /*
-     * Вспомогательный метод для создания стандартизированного объекта ошибки.
-     */
-    private Object createErrorResponse(String error, String message) {
-        return Map.of(
-                "error", error,
-                "message", message,
-                "timestamp", LocalDateTime.now()
-        );
-    }
 }

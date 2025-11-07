@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.example.productsystem.response.ErrorResponse.createErrorResponse;
+
 /*
  * REST ресурс для управления сущностями Address.
  * Предоставляет CRUD операции и дополнительные endpoints для поиска и фильтрации.
@@ -190,14 +192,4 @@ public class AddressResource {
                 .build();
     }
 
-    /*
-     * Вспомогательный метод для создания стандартизированного ответа об ошибке.
-     */
-    private Object createErrorResponse(String error, String message) {
-        return Map.of(
-                "error", error,
-                "message", message,
-                "timestamp", LocalDateTime.now()
-        );
-    }
 }
